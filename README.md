@@ -1,1 +1,1 @@
-# best-algorith-collection
+# best-algorithm-collection
