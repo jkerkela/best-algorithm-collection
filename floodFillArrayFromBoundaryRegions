@@ -1,0 +1,50 @@
+class Solution {
+    
+private:
+int nextStepDims[4][2] = { {0,1},{0,-1},{1,0},{-1,0} };
+int boardWidth, boardHeight;
+vector<vector<bool>>visited;
+vector<vector<bool>>isX;
+    
+public:
+    
+    
+    void exploreBoundaryFloodFill(vector<vector<char>>& board, vector<vector<bool>>& visited, vector<vector<bool>>& isX, int x, int y){
+        if (x < 0 || y < 0 || x >= boardWidth || y >= boardHeight || visited[x][y] || board[x][y] == 'X')
+			return;
+        visited[x][y] = true;
+        isX[x][y] = false;
+        for(int i = 0; i < 4; i++) {
+            int nextY = nextStepDims[i][1];
+            int nextX = nextStepDims[i][0];
+            exploreBoundaryFloodFill(board, visited, isX, nextX, nextY);
+        }
+    }
+    
+    void resolveBoardBoundaryRegions(vector<vector<char>>& board) {
+        
+        boardWidth = board[0].size();
+        boardHeight = board.size();
+        vector<vector<bool>>isVisited = vector<vector<bool>>(boardWidth, vector<bool>(boardHeight, false));
+        vector<vector<bool>>isX = vector<vector<bool>>(boardWidth, vector<bool>(boardHeight, true));
+        
+        for(int i = 0; i < boardWidth; i ++) {
+            for(int j = 0; j < boardHeight; j ++) {
+                if ((i == 0 || j == 0 || i == (boardWidth - 1) || j == (boardHeight - 1)) && board[i][j]=='O') {
+                    exploreBoundaryFloodFill(board, isVisited, isX, i , j);
+                }
+            }  
+        }
+        for(int i = 0; i < boardWidth; i++) {
+            for(int j = 0; j < boardHeight; j ++) {
+                if (isX[i][j]) {
+                    board[i][j] = 'X';
+                }
+            }
+        }
+    }
+    
+    void solve(vector<vector<char>>& board) {
+        resolveBoardBoundaryRegions(board);
+    }
+};
