@@ -19,7 +19,7 @@ public:
         boardWidth = board[0].size();
         boardHeight = board.size();
         visited = vector<vector<bool>>(boardHeight, vector<bool>(boardWidth, false));
-        isX = vector<vector<bool>>(boardHeight, vector<bool>(boardHeight, true));
+        isX = vector<vector<bool>>(boardHeight, vector<bool>(boardWidth, true));
         
         for(int i = 0; i < boardHeight; i ++) {
             for(int j = 0; j < boardWidth; j ++) {
