@@ -1,0 +1,49 @@
+// solution for https://leetcode.com/problems/matrix-block-sum/
+class Solution {
+public:
+    vector<vector<int>> matrixBlockSum(vector<vector<int>>& mat, int K) {
+        auto sum_array = countSumArray(mat);
+        return generateSolutionArray(sum_array, K);
+    }
+private:
+    
+    vector<vector<int>> countSumArray(vector<vector<int>>& mat) {
+        //count element sums to sum array
+        //sum array shall consist from elements having cumulative sum for rows and columns AND rows will cumulate columns sum from previous row (then we can count any sum by K by substracting from sum array) 
+        vector<vector<int>> prefix_sum = mat;
+        
+        for (int i = 0; i < mat.size(); i++) {
+            int sum = 0;
+            for (int j = 0; j < mat[0].size(); j++) {
+                sum = sum + mat[i][j];
+                if (i > 0) {
+                    prefix_sum[i][j] = sum + prefix_sum[i-1][j];
+                } else {
+                    prefix_sum[i][j] = sum;   
+                }
+            }
+        }
+        
+        return prefix_sum;
+    }
+    
+    vector<vector<int>> generateSolutionArray(vector<vector<int>>& cumulativeSumInRowsAndColumns, int K) {
+        //count element sums to result array based on max element values  from (i - k, j - k) to (i + k, j + k)
+        auto solutionArray = cumulativeSumInRowsAndColumns;
+        auto row_size = cumulativeSumInRowsAndColumns[0].size();
+        auto column_size = cumulativeSumInRowsAndColumns.size();
+        for(int i = 0; i < column_size; i++) {
+            for(int j = 0; j < row_size; j++) {
+                 int upper_i = ((i+K) >= column_size) ? (column_size-1) : (i+K);
+                int upper_j = ((j+K) >= row_size) ? (row_size-1) : (j+K);
+                
+                int lower_i = ((i-K) <= 0 ) ? 0 : (i-K);
+                int lower_j = ((j-K) <= 0 ) ? 0 : (j-K);
+            
+                
+                solutionArray[i][j] = cumulativeSumInRowsAndColumns[upper_i][upper_j] - ((lower_i == 0) ? 0 : cumulativeSumInRowsAndColumns[lower_i-1][upper_j]) - ((lower_j == 0) ? 0 : cumulativeSumInRowsAndColumns[upper_i][lower_j-1]) + ((lower_i == 0) || (lower_j == 0)  ? 0 : cumulativeSumInRowsAndColumns[lower_i-1][lower_j-1]);
+            }
+        }
+        return solutionArray;
+    }
+};
